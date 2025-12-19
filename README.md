@@ -100,11 +100,13 @@ ___
 ### 🔑 API
 These functions are considered public and stable:
 
-`require("colorscheme-picker").setup(opts)`
-`require("colorscheme-picker").pick()`
-`require("colorscheme-picker").apply(name)`
-`require("colorscheme-picker").print()`
-`require("colorscheme-picker").get_schemes()`
+``` lua
+require("colorscheme-picker").setup(opts)
+require("colorscheme-picker").pick()
+require("colorscheme-picker").apply(name)
+require("colorscheme-picker").print()
+require("colorscheme-picker").get_schemes()
+```
 
 Anything else is internal and may change.
 

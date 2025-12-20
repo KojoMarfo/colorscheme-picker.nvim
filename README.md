@@ -5,6 +5,12 @@ Designed to stay out of the way and work with your existing setup.
 
 ___
 
+## Showcase
+
+![](./assets/showcase_video.mp4)
+
+___
+
 ### ✨ Features
 - Interactive colorscheme picker
     - Supports fzf-lua or Telescope
@@ -14,9 +20,7 @@ ___
 - Global style overrides
     - Disable bold, italic, and/or underline across all highlight groups
 - Optional background transparency
-- Optional highlight customization
-    - Cursor line
-    - Line numbers
+- Optional highlight customization (CursorLine, Line Numbers, etc.)
 - Configurable keymaps
 - User commands for scripting and discoverability
 
@@ -48,31 +52,30 @@ ___
 require("colorscheme-picker").setup()
 ```
 
-**Full example**
+**Default example**
 ``` lua
 require("colorscheme-picker").setup({
-	default_scheme = "default", -- either leave blank for persistance or set specific scheme for every restart
-	picker = "fzf-lua",         -- "fzf-lua" or "telescope"
-	include_stock = false,      -- include built-in colorschemes
-
+	default_scheme = "default", -- can declare scheme or reload last used scheme
+	picker = "fzf-lua", -- "fzf-lua" or "telescope"
+	include_stock = false, -- include all neovim colorschemes or only installed ones
 	colors = {
-		transparent = true,
-		cursor_line = "#101010",
-		line_number_current = "#e0e0e0",
-		line_number = "#242424",
-		comment = "#606060",
-		inc_search = "#f0c460",
+		transparent = false, -- set background to universally transparent
+		cursor_line = nil, -- set cursorline color
+		line_number_current = nil, -- set current line number color
+		line_number = nil, -- set other line numbers color
+		comment = nil, -- set comment color
+		inc_search = nil, -- set background of incremental search
+		end_of_buffer = nil, -- set ~ color at end of file, set false to remove, or leave as default
+		visual_mode = nil, -- set background color of visual mode selection
 	},
-
 	style = {
-		bold = false,
-		italic = false,
-		underline = true,
+		bold = true, -- universal bold
+		italic = true, -- universal italic
+		underline = true, -- universal underline
 	},
-
 	keymaps = {
-		pick = "<leader>cs",
-		print = "<leader>cp",
+		pick = nil, -- open picker
+		print = nil, -- print currently used colorscheme
 	},
 })
 ```

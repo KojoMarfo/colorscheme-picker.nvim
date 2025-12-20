@@ -5,7 +5,6 @@ local function safe_required(mod)
 	return ok and lib or nil
 end
 
-local persistence = require("colorscheme-picker.persistence")
 local util = require("colorscheme-picker.util")
 
 M.config = {
@@ -13,10 +12,12 @@ M.config = {
 	picker = "fzf-lua", -- "fzf-lua" or "telescope"
 	include_stock = false, -- include all neovim colorschemes or only installed ones
 	colors = {
-		transparent = false, -- set background transparent
+		transparent = false, -- set background to universally transparent
 		cursor_line = nil, -- set cursorline color
 		line_number_current = nil, -- set current line number color
 		line_number = nil, -- set other line numbers color
+		comment = nil, -- set comment color
+		inc_search = nil, -- set background of incremental search
 	},
 	style = {
 		bold = true, -- universal bold
@@ -45,14 +46,14 @@ function M.setup(opts)
 	end
 	M.state.did_setup = true
 
+	vim.g.SCHEME = ""
+
 	opts = opts or {}
 
 	M.config = vim.tbl_deep_extend("force", M.config, opts)
 
 	if M.config.default_scheme and M.config.default_scheme ~= "default" then
 		M.state.current = M.config.default_scheme
-	else
-		M.state.current = persistence.load()
 	end
 
 	-- validation
@@ -63,8 +64,9 @@ function M.setup(opts)
 
 	vim.api.nvim_create_autocmd("VimEnter", {
 		once = true,
+		nested = true,
 		callback = function()
-			M.apply(M.state.current)
+			M.apply(vim.g.SCHEME)
 			M.apply_keymaps()
 		end,
 	})
@@ -75,8 +77,8 @@ function M.setup(opts)
 	vim.api.nvim_create_user_command("ColorschemePrint", function()
 		require("colorscheme-picker").print()
 	end, {})
-	vim.api.nvim_create_user_command("ColorschemeApply", function(opts)
-		require("colorscheme-picker").apply(opts.args)
+	vim.api.nvim_create_user_command("ColorschemeApply", function(options)
+		require("colorscheme-picker").apply(options.args)
 	end, {
 		nargs = 1,
 		complete = function()
@@ -186,14 +188,18 @@ function M.apply(name)
 	if not ok then
 		vim.notify("[colorscheme-picker] Colorscheme not found: " .. name, vim.log.levels.WARN)
 		return
+	else
+		vim.cmd.colorscheme(name)
 	end
 
 	M.state.current = name
 
 	if not M.config.default_scheme or M.config.default_scheme == "default" then
-		persistence.save(name)
+		vim.g.SCHEME = name
 	end
 
+	vim.api.nvim_set_hl(0, "WinBar", { fg = "#808080", bg = "none" })
+	vim.api.nvim_set_hl(0, "WinBarNC", { fg = "#505050", bg = "none" })
 	M.apply_font_styles()
 	if M.config.colors.transparent then
 		M.apply_transparency()
@@ -207,10 +213,17 @@ function M.apply(name)
 	if M.config.colors.line_number ~= nil then
 		vim.api.nvim_set_hl(0, "LineNr", { fg = M.config.colors.line_number })
 	end
+	if M.config.colors.comment ~= nil then
+		vim.api.nvim_set_hl(0, "Comment", { fg = M.config.colors.comment })
+	end
+	if M.config.colors.inc_search ~= nil then
+		vim.api.nvim_set_hl(0, "IncSearch", { fg = "#000000", bg = M.config.colors.inc_search })
+	end
+	vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#808080", bg = "none" })
 end
 
 function M.print()
-	print("Colorscheme: " .. M.state.current)
+	print("Colorscheme: " .. vim.g.SCHEME)
 end
 
 function M.apply_transparency()

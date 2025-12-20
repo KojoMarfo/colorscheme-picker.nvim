@@ -51,20 +51,22 @@ require("colorscheme-picker").setup()
 **Full example**
 ``` lua
 require("colorscheme-picker").setup({
-	default_scheme = "default", -- or a specific colorscheme name
+	default_scheme = "default", -- either leave blank for persistance or set specific scheme for every restart
 	picker = "fzf-lua",         -- "fzf-lua" or "telescope"
 	include_stock = false,      -- include built-in colorschemes
 
 	colors = {
 		transparent = true,
-		cursor_line = nil,
-		line_number_current = nil,
-		line_number = nil,
+		cursor_line = "#101010",
+		line_number_current = "#e0e0e0",
+		line_number = "#242424",
+		comment = "#606060",
+		inc_search = "#f0c460",
 	},
 
 	style = {
 		bold = false,
-		italic = true,
+		italic = false,
 		underline = true,
 	},
 
@@ -126,8 +128,7 @@ If `lualine.nvim` is installed, it will be reloaded automatically.
 ___
 
 ### 🧠 Persistence
-The last-used colorscheme is stored in:
-`stdpath("data")/colorscheme-picker.json`
+This plugin makes use of NeoVim ShaDa to store the last used colorscheme.
 
 Persistence is skipped if a fixed `default_scheme` is configured.
 

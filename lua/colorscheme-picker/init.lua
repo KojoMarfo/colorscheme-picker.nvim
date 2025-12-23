@@ -236,17 +236,17 @@ function M.apply_font_styles()
 	local disable_underline = M.config.style.underline == false
 
 	for _, group in ipairs(vim.fn.getcompletion("", "highlight")) do
-		local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group })
-		if ok and hl then
+		local ok, highlight = pcall(vim.api.nvim_get_hl, 0, { name = group })
+		if ok and highlight then
 			local new = {}
 
-			if disable_bold and hl.bold then
+			if disable_bold and highlight.bold then
 				new.bold = false
 			end
-			if disable_italic and hl.italic then
+			if disable_italic and highlight.italic then
 				new.italic = false
 			end
-			if disable_underline and hl.underline then
+			if disable_underline and highlight.underline then
 				new.underline = false
 			end
 

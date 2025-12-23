@@ -24,7 +24,7 @@ M.config = {
 	style = {
 		bold = true, -- universal bold
 		italic = true, -- universal italic
-		underline = true, -- universal underline
+		undercurl = true, -- universal undercurl
 	},
 	keymaps = {
 		pick = nil, -- open picker
@@ -153,7 +153,6 @@ function M.pick()
 end
 
 local function hl(group, opts)
-	vim.api.nvim_set_hl(0, group, {})
 	vim.api.nvim_set_hl(0, group, opts)
 end
 
@@ -174,12 +173,12 @@ function M.apply(name)
 		vim.g.SCHEME = name
 	end
 
-	M.apply_font_styles()
 	M.apply_highlight_colors()
 	if M.config.colors.transparent then
 		M.apply_transparency()
 	end
 	M.apply_highlight_colors()
+	M.apply_font_styles()
 end
 
 function M.apply_highlight_colors()
@@ -231,29 +230,42 @@ function M.apply_transparency()
 end
 
 function M.apply_font_styles()
-	local disable_bold = M.config.style.bold == false
-	local disable_italic = M.config.style.italic == false
-	local disable_underline = M.config.style.underline == false
+	local bold = M.config.style.bold
+	local italic = M.config.style.italic
+	local undercurl = M.config.style.undercurl
 
-	for _, group in ipairs(vim.fn.getcompletion("", "highlight")) do
-		local ok, highlight = pcall(vim.api.nvim_get_hl, 0, { name = group })
-		if ok and highlight then
-			local new = {}
+	local groups = vim.fn.getcompletion("", "highlight")
 
-			if disable_bold and highlight.bold then
-				new.bold = false
-			end
-			if disable_italic and highlight.italic then
-				new.italic = false
-			end
-			if disable_underline and highlight.underline then
+	for _, group in ipairs(groups) do
+		local ok, hi = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
+		if not ok or not hi then
+			goto continue
+		end
+
+		local new = vim.deepcopy(hi)
+
+		if not bold then
+			new.bold = false
+		end
+		if not italic then
+			new.italic = false
+		end
+
+		local has_line = hi.underline or hi.undercurl
+
+		if has_line then
+			if undercurl then
 				new.underline = false
-			end
-
-			if next(new) ~= nil then
-				vim.api.nvim_set_hl(0, group, new)
+				new.undercurl = true
+			elseif not undercurl then
+				new.underline = true
+				new.undercurl = false
 			end
 		end
+
+		vim.api.nvim_set_hl(0, group, new)
+
+		::continue::
 	end
 end
 

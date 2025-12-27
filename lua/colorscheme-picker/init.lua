@@ -9,7 +9,7 @@ local util = require("colorscheme-picker.util")
 
 M.config = {
 	default_scheme = "default", -- can declare default or reload last used scheme
-	picker = "fzf-lua", -- "fzf-lua" or "telescope" or "native-find"
+	picker = "default", -- "fzf-lua" or "telescope" or "native-find" or "default"
 	include_stock = false, -- include all neovim colorschemes or only installed ones
 	colors = {
 		transparent = false, -- set background to universally transparent
@@ -50,7 +50,7 @@ function M.setup(opts)
 	M.config = vim.tbl_deep_extend("force", M.config, opts)
 
 	-- validation
-	if not vim.tbl_contains({ "fzf-lua", "telescope", "native-find" }, M.config.picker) then
+	if not vim.tbl_contains({ "fzf-lua", "telescope", "native-find", "default" }, M.config.picker) then
 		vim.notify("[colorscheme-picker] Invalid picker: " .. tostring(M.config.picker), vim.log.levels.ERROR)
 		return
 	end
@@ -93,10 +93,18 @@ function M.get_schemes()
 	end
 end
 
+function M._pick_ui()
+	vim.ui.select(M.get_schemes(), {
+		prompt = "Pick colorscheme: ",
+	}, function(choice)
+		M.apply(choice)
+	end)
+end
+
 function M._pick_fzf()
 	require("fzf-lua").fzf_exec(M.get_schemes(), {
 		winopts = {
-			width = 0.4,
+			width = 0.2,
 		},
 		prompt = "Pick colorscheme: ",
 		actions = {
@@ -140,7 +148,6 @@ function M._pick_native()
 end
 
 function M.pick()
-	M.get_schemes()
 	if M.config.picker == "fzf-lua" then
 		if safe_required("fzf-lua") then
 			M._pick_fzf()
@@ -162,6 +169,8 @@ function M.pick()
 			vim.notify("[colorscheme-picker] native-find not found", vim.log.levels.ERROR)
 			return
 		end
+	elseif M.config.picker == "default" then
+		M._pick_ui()
 	end
 end
 
@@ -226,7 +235,7 @@ function M.apply_highlight_colors()
 end
 
 function M.print()
-	print("Colorscheme: " .. vim.g.SCHEME)
+	print("Current colorscheme: " .. vim.g.SCHEME)
 end
 
 function M.apply_transparency()

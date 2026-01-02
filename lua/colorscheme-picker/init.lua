@@ -112,6 +112,7 @@ end
 
 function M._pick_fzf()
 	local fzf = require("fzf-lua")
+	local actions = require("fzf-lua.actions")
 
 	local original = get_current_scheme()
 	local committed = false
@@ -136,19 +137,21 @@ function M._pick_fzf()
 				if scheme then
 					M.apply(scheme)
 				end
+				return false
 			end,
 			["default"] = function(selected)
 				committed = true
 				M.apply(selected[1])
+				return true
 			end,
 			-- <Esc> / <C-c>
 			["esc"] = function()
 				-- handled by on_close
-				fzf.actions.close()
+				actions.abort()
 			end,
 
 			["ctrl-c"] = function()
-				fzf.actions.close()
+				actions.abort()
 			end,
 		},
 		fzf_opts = {

@@ -110,6 +110,13 @@ function M._pick_ui()
 	end)
 end
 
+function M._preview_scheme(name)
+	if not name or name == "" then
+		return
+	end
+	M.apply(name)
+end
+
 function M._pick_fzf()
 	local fzf = require("fzf-lua")
 
@@ -145,7 +152,14 @@ function M._pick_fzf()
 			end,
 		},
 		fzf_opts = {
-			["--preview-window"] = "hidden",
+			["--preview-window"] = "right:hidden",
+			["--preview"] = table.concat({
+				"nvim",
+				"--server",
+				vim.v.servername,
+				"--remote-expr",
+				string.format("require('colorscheme-picker')._preview_scheme('%s')", "{1}"),
+			}, " "),
 		},
 	})
 end

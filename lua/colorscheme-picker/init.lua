@@ -143,7 +143,6 @@ function M._pick_fzf()
 					last_previewed = scheme
 					M.apply(scheme)
 				end
-				return false
 			end,
 			["ctrl-p"] = function(selected)
 				local scheme = selected[1]
@@ -151,7 +150,6 @@ function M._pick_fzf()
 					last_previewed = scheme
 					M.apply(scheme)
 				end
-				return false
 			end,
 		},
 		fzf_opts = {

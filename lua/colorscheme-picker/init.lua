@@ -9,7 +9,7 @@ local util = require("colorscheme-picker.util")
 
 M.config = {
 	default_scheme = "default", -- can declare default or reload last used scheme
-	picker = "default", -- "fzf-lua" or "telescope" or "native-find" or "default"
+	picker = "default", -- "fzf-lua" or "default"
 	include_stock = true, -- include all neovim colorschemes or only installed ones
 	colors = {
 		transparent = false, -- set background to universally transparent
@@ -36,6 +36,10 @@ M.state = {
 	current = nil,
 	did_setup = false,
 }
+
+local function get_current_scheme()
+	return vim.g.SCHEME ~= "" and vim.g.SCHEME or vim.g.colors_name
+end
 
 function M.setup(opts)
 	if M.state.did_setup then
@@ -107,51 +111,49 @@ function M._pick_ui()
 end
 
 function M._pick_fzf()
-	require("fzf-lua").fzf_exec(M.get_schemes(), {
+	local fzf = require("fzf-lua")
+
+	local original = get_current_scheme()
+	local committed = false
+
+	fzf.fzf_exec(M.get_schemes(), {
 		winopts = {
 			width = 0.4,
 			height = 0.4,
 			row = 0,
 			col = 1,
+			-- restore scheme if picker is closed without confirming
+			on_close = function()
+				if not committed and original then
+					M.apply(original)
+				end
+			end,
 		},
 		prompt = "Pick colorscheme: ",
 		actions = {
+			["preview"] = function(selected)
+				local scheme = selected[1]
+				if scheme then
+					M.apply(scheme)
+				end
+			end,
 			["default"] = function(selected)
+				committed = true
 				M.apply(selected[1])
 			end,
-		},
-	})
-end
-
-function M._pick_telescope()
-	local pickers = require("telescope.pickers")
-	local finders = require("telescope.finders")
-	local conf = require("telescope.config").values
-	local actions = require("telescope.actions")
-	local action_state = require("telescope.actions.state")
-
-	pickers
-		.new({}, {
-			prompt_title = "Pick colorscheme:",
-			finder = finders.new_table({
-				results = M.get_schemes(),
-			}),
-			sorter = conf.generic_sorter({}),
-			attach_mappings = function(_, map)
-				actions.select_default:replace(function(bufnr)
-					local entry = action_state.get_selected_entry()
-					actions.close(bufnr)
-					M.apply(entry[1])
-				end)
-				return true
+			-- <Esc> / <C-c>
+			["esc"] = function()
+				-- handled by on_close
+				fzf.actions.close()
 			end,
-		})
-		:find()
-end
 
-function M._pick_native()
-	require("native-find").pick(M.get_schemes(), {
-		prompt = "Pick colorscheme: ",
+			["ctrl-c"] = function()
+				fzf.actions.close()
+			end,
+		},
+		fzf_opts = {
+			["--preview-window"] = "hidden",
+		},
 	})
 end
 

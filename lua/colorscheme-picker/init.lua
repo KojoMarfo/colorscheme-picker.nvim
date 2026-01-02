@@ -120,9 +120,7 @@ end
 function M._pick_fzf()
 	local fzf = require("fzf-lua")
 
-	local original = get_current_scheme()
 	local committed = false
-	local last_previewed = nil
 
 	fzf.fzf_exec(M.get_schemes(), {
 		winopts = {
@@ -130,25 +128,12 @@ function M._pick_fzf()
 			height = 0.4,
 			row = 0,
 			col = 1,
-			-- restore scheme if picker is closed without confirming
-			on_close = function()
-				if not committed and original then
-					M.apply(original)
-				end
-			end,
 		},
 		prompt = "Pick colorscheme: ",
 		actions = {
-			["enter"] = function(selected)
-				committed = true
-				M.apply(selected[1])
-			end,
 			["default"] = function(selected)
-				local scheme = selected[1]
-				if scheme and scheme ~= last_previewed then
-					last_previewed = scheme
-					M.apply(scheme)
-				end
+				M.apply(selected[1])
+				return true
 			end,
 		},
 		fzf_opts = {

